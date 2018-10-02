@@ -1,24 +1,28 @@
-rem THIS BATCH FILE WILL LOOP THROUGH ALL FILES ENDING IN .txt IN THE DIRECTORY THIS BATCH FILE IS LOCATED IN
-rem IT WILL STORE THE CONTENTS OF EACH FILE IN AN OUTPUT FILE CALLED combinedresults.txt
+rem THIS BATCH FILE WILL LOOP THROUGH ALL FILES WITH THE SPECIFIED FILE EXTENSION IN THE DIRECTORY THIS BATCH FILE IS LOCATED IN
+rem IT WILL STORE THE CONTENTS OF EACH FILE IN AN OUTPUT FILE WITH THE SPECIFIED NAME AND SPECIFIED FILE EXTENSION
 rem IF THE OUTPUT FILE ALREADY EXISTS, IT WILL BE OVERWRITTEN
-rem THE FILE WILL BE STORED IN A SUBDIRECTORY OF THE DIRECTORY THIS BATCH FILE IS LOCATED IN CALLED combinedresults
+rem THE FILE WILL BE STORED IN A SUBDIRECTORY OF THE DIRECTORY THIS BATCH FILE IS LOCATED IN USING THE SPECIFIED DIRECTORY NAME
 rem IF THE SUBDIRECTORY DOESN'T EXIST IT WILL BE CREATED
 rem THIS BATCH FILE WILL EXECUTE THE QUICKEST IF RUN FROM THE LOCAL COMPUTER ON WHICH IT RESIDES, BUT RUNNING IT FROM A UNC PATH IS POSSIBLE
 
-rem SET VARIABLES
-set currentpath=%~dp0
+rem UPDATE THESE VARIABLE VALUES ACCORDING TO YOUR NEEDS
+set fileextension=sql
+set outputfiledirectory=combinedresults
 set commentstart=/**************************************************************************************************
 set commentbodyprefix=*
 set commentend=**************************************************************************************************/
-set outputfiledirectory=combinedresults
-set outputfilename=combinedresults.txt
+
+rem DO NOT MODIFY THESE VARIABLE VALUES
+set currentpath=%~dp0
+set outputfilename=combinedresults.%fileextension%
+set outputfilefullpath=%currentpath%%outputfiledirectory%\%outputfilename%
 
 rem CREATE SUBDIRECTORY IF IT DOESN'T ALREADY EXIST
 rem DELETE OUTPUT FILE IF IT ALREADY EXISTS
-if not exist "%currentpath%%outputfiledirectory%\" (mkdir "%currentpath%%outputfiledirectory%\") else (if exist "%currentpath%%outputfiledirectory%\%outputfilename%" del "%currentpath%%outputfiledirectory%\%outputfilename%")
+if not exist "%currentpath%%outputfiledirectory%\" (mkdir "%currentpath%%outputfiledirectory%\") else (if exist "%outputfilefullpath%" del "%outputfilefullpath%")
 
-rem LOOP THROUGH ALL .txt FILES IN THE DIRECTORY THIS BATCH FILE IS LOCATED IN AND WRITE THE FILE NAME AND ITS CONTENTS TO THE OUTPUT FILE
-for %%f in ("%currentpath%*.txt") do echo %commentstart% >>"%currentpath%%outputfiledirectory%\%outputfilename%" & echo %commentbodyprefix% %%f >>"%currentpath%%outputfiledirectory%\%outputfilename%" & echo %commentend% >>"%currentpath%%outputfiledirectory%\%outputfilename%" & type "%%f" >>"%currentpath%%outputfiledirectory%\%outputfilename%" & echo: >>"%currentpath%%outputfiledirectory%\%outputfilename%" & echo: >>"%currentpath%%outputfiledirectory%\%outputfilename%"
+rem LOOP THROUGH ALL FILES WITH SPECIFIED FILE EXTENSION IN THE DIRECTORY THIS BATCH FILE IS LOCATED IN AND WRITE THE FILE NAME AND ITS CONTENTS TO THE OUTPUT FILE
+for %%f in ("%currentpath%*.%fileextension%") do echo %commentstart% >>"%outputfilefullpath%" & echo %commentbodyprefix% %%f >>"%outputfilefullpath%" & echo %commentend% >>"%outputfilefullpath%" & type "%%f" >>"%outputfilefullpath%" & echo: >>"%outputfilefullpath%" & echo: >>"%outputfilefullpath%"
 
 rem ALLOW USER TO SEE THE COMMAND WINDOW
 pause
